@@ -1,0 +1,35 @@
+name: Update photo gallery manifest
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "photos/**"
+      - "scripts/generate-manifest.mjs"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  build-manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Generate photos.json
+        run: node scripts/generate-manifest.mjs
+
+      - name: Commit updated manifest
+        run: |
+          git config user.name "gallery-bot"
+          git config user.email "actions@github.com"
+          git add photos.json
+          git diff --quiet --cached || git commit -m "Update photo manifest"
+          git push
