@@ -2,6 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <script>
+    // Without a trailing slash, "../assets/..." and "./photos.json" resolve
+    // one level too high. Fix the URL before anything else loads.
+    if (!location.pathname.endsWith('/')) {
+      location.replace(location.pathname + '/' + location.search + location.hash);
+    }
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title id="page-title">Album — Photos</title>
   <link rel="stylesheet" href="../assets/style.css">
