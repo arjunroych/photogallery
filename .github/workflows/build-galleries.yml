@@ -1,0 +1,40 @@
+name: Build gallery manifests
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '.github/**'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-galleries
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Generate manifests
+        id: generate
+        run: node scripts/generate-manifests.mjs
+
+      - name: Commit and push if changed
+        if: steps.generate.outputs.changed == 'true'
+        run: |
+          git config user.name "gallery-bot"
+          git config user.email "gallery-bot@users.noreply.github.com"
+          git add '**/photos.json' albums.json
+          git commit -m "chore: update gallery manifests [skip ci]"
+          git push

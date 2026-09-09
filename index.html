@@ -1,54 +1,21 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>¯\_(ツ)_/¯</title>
-<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@700&display=swap" rel="stylesheet">
-<style>
-  html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    width: 100%;
-    background-color: #33322d; /* dark grey with a hint of greenish brown */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  h1 {
-    font-family: 'Raleway', sans-serif;
-    font-weight: 700;
-    color: #f5f3ee; /* slightly off-white */
-    font-size: 6vw;
-    text-align: center;
-    margin: 0;
-    padding: 0 1rem;
-  }
-
-  p {
-    font-family: 'Raleway', sans-serif;
-    font-weight: 200;
-    color: #f5f3ee; /* slightly off-white */
-    font-size: 1.5vw;
-    text-align: center;
-    margin: 0;
-    padding: 0 1rem;
-  }
-
-  .container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Photos — Arjun Roy Chowdhury</title>
+  <link rel="stylesheet" href="./assets/style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>¯\_(ツ)_/¯</h1>
-    <p>..nothing to see here!</p>
-  </div>
+  <header class="site-header">
+    <h1>Photos</h1>
+    <p class="meta">A running collection of albums, one per event.</p>
+  </header>
+
+  <main id="album-list" class="album-list">
+    <!-- populated by home.js from albums.json -->
+  </main>
+
+  <script src="./assets/home.js"></script>
 </body>
 </html>
