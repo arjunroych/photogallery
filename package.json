@@ -1,0 +1,9 @@
+{
+  "name": "photogallery-manifests",
+  "private": true,
+  "type": "module",
+  "description": "Build-time image manifest + thumbnail generation for the photo gallery. Not part of the site's runtime — only used by scripts/generate-manifests.mjs via GitHub Actions.",
+  "dependencies": {
+    "sharp": "^0.35.4"
+  }
+}

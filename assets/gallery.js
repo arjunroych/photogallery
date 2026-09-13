@@ -23,9 +23,9 @@
 
   function renderGrid() {
     grid.innerHTML = '';
-    photos.forEach((src, index) => {
+    photos.forEach((photo, index) => {
       const img = document.createElement('img');
-      img.src = src;
+      img.src = photo.thumb;
       img.loading = 'lazy';
       img.alt = '';
       img.addEventListener('click', () => openLightbox(index));
@@ -51,7 +51,7 @@
   }
 
   function showPhoto(index) {
-    lightboxImg.src = photos[index];
+    lightboxImg.src = photos[index].full;
     // Zoom always resets when moving to a different photo, so nobody
     // lands on the next image already zoomed in from the last one.
     resetZoom();
