@@ -1,244 +1,195 @@
-/* ==========================================================================
-   photos.arjunroychowdhury.ca — shared styles
-   One quiet accent, one display face for titles, everything else out of the way.
-   ========================================================================== */
-
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap');
-
 :root {
-  --bg: #eeeeee;
-  --ink: #1b1b1a;
-  --muted: #6f6f6a;
-  --line: #e6e4df;
-  --accent: #2e5d50;
-  --scrim: rgba(10, 10, 9, 0.94);
-  --gap: 4px;
-  --max-width: 1400px;
   --font-display: 'Fraunces', Georgia, serif;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* D4 — dark mode: dark gray bg, soft light-gray text (not pure black/white) */
+  --color-bg: #1b1b1b;
+  --color-text: #d6d6d6;
+  --color-text-dim: #999999;
+  --color-accent: #3f6b5c; /* pine green, unchanged from v1 */
+
+  /* D5 — tighter outer margin, bigger grid rows */
+  --page-margin: 14px;
+  --row-height: 320px;
+
+  /* D8 — article-style left/right gutter for the header, decoupled
+     from the grid's tighter --page-margin so the grid stays flush
+     while the header reads like an article lede. */
+  --header-padding-x: 64px;
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 html, body {
   margin: 0;
   padding: 0;
-  background: var(--bg);
-  color: var(--ink);
+  background: var(--color-bg);
+  color: var(--color-text);
   font-family: var(--font-body);
-  -webkit-font-smoothing: antialiased;
 }
 
-img { display: block; max-width: 100%; }
+/* ---------- Album header (F6.1 / F6.2 / F6.3) ---------- */
 
-a { color: inherit; }
-
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
+.album-header {
+  padding: 40px var(--header-padding-x) 24px;
+  max-width: 900px;
 }
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.001ms !important;
-    transition-duration: 0.001ms !important;
-  }
-}
-
-/* ---------- shared header ---------- */
-
-.site-header {
-  padding: 40px clamp(16px, 4vw, 48px) 24px;
-  max-width: var(--max-width);
-  margin: 0 auto;
-}
-
-.site-header .home-link {
-  display: inline-block;
-  font-size: 13px;
-  color: var(--muted);
-  text-decoration: none;
-  margin-bottom: 14px;
-  letter-spacing: 0.01em;
-}
-
-.site-header .home-link:hover { color: var(--accent); }
-
-.site-header h1 {
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: clamp(28px, 4.5vw, 44px);
-  line-height: 1.1;
-  margin: 0 0 8px;
-}
-
-.site-header .meta {
-  font-size: 14px;
-  color: var(--muted);
-}
-
-/* ---------- landing page: album list ---------- */
-
-.album-list {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 0 clamp(16px, 4vw, 48px) 80px;
-  display: flex;
-  flex-direction: column;
-}
-
-.album-row {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  padding: 20px 0;
-  border-top: 1px solid var(--line);
-  text-decoration: none;
-  color: var(--ink);
-  transition: opacity 0.15s ease;
-}
-
-.album-row:hover { opacity: 0.7; }
-
-.album-row:last-child { border-bottom: 1px solid var(--line); }
-
-.album-cover {
-  width: 96px;
-  height: 96px;
-  flex-shrink: 0;
-  overflow: hidden;
-  background: var(--line);
-}
-
-.album-cover img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.album-info { min-width: 0; }
 
 .album-title {
   font-family: var(--font-display);
-  font-size: 20px;
-  font-weight: 500;
-  margin: 0 0 4px;
+  font-weight: 600;
+  font-size: clamp(28px, 5vw, 44px);
+  line-height: 1.1;
+  margin: 0 0 10px;
+  color: var(--color-text);
 }
 
-.album-meta {
-  font-size: 13px;
-  color: var(--muted);
+.album-date {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--color-text-dim);
+  margin: 0 0 14px;
+  letter-spacing: 0.02em;
 }
 
-.empty-state {
-  padding: 60px 0;
-  color: var(--muted);
-  font-size: 15px;
-  max-width: 40ch;
+.album-description {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--color-text);
+  margin: 0;
+  max-width: 640px;
 }
 
-/* ---------- album page: justified grid ---------- */
+/* ---------- Justified photo grid (D5 / F3.1) ---------- */
 
-.gallery {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 0 clamp(8px, 2vw, 16px) 60px;
-}
-
-.gallery-row {
+.gallery-grid {
   display: flex;
-  gap: var(--gap);
-  margin-bottom: var(--gap);
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 0 var(--page-margin) var(--page-margin);
 }
 
-.gallery-row img {
-  width: 100%;
-  height: 100%;
+.gallery-grid img {
+  height: var(--row-height);
+  flex-grow: 1;
   object-fit: cover;
   cursor: zoom-in;
-  opacity: 0;
-  transition: opacity 0.4s ease;
+  background: #262626;
 }
 
-.gallery-row img.loaded { opacity: 1; }
-
-.gallery-empty {
-  color: var(--muted);
-  font-size: 15px;
-  padding: 40px clamp(8px, 2vw, 16px);
-  max-width: 40ch;
+@media (max-width: 768px) {
+  :root {
+    --row-height: 200px;
+    --page-margin: 12px;
+    --header-padding-x: 12px;
+  }
 }
 
-/* ---------- lightbox ---------- */
+/* ---------- Lightbox ---------- */
 
 .lightbox {
   position: fixed;
   inset: 0;
-  background: var(--scrim);
-  display: flex;
+  background: rgba(10, 10, 10, 0.96);
+  display: none;
   align-items: center;
   justify-content: center;
-  z-index: 100;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.25s ease;
+  z-index: 1000;
+  touch-action: none;
 }
 
 .lightbox.open {
-  opacity: 1;
-  pointer-events: auto;
+  display: flex;
 }
 
-.lightbox img {
-  max-width: 92vw;
-  max-height: 86vh;
-  width: auto;
-  height: auto;
+.lightbox-stage {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  touch-action: none;
+}
+
+.lightbox-stage img {
+  max-width: 100%;
+  max-height: 100%;
+  transition: transform 0.15s ease-out;
   user-select: none;
+  -webkit-user-drag: none;
+  touch-action: none;
 }
 
-.lightbox-close,
-.lightbox-prev,
-.lightbox-next {
-  position: absolute;
-  background: none;
-  border: none;
-  color: #f5f5f3;
-  cursor: pointer;
-  padding: 12px;
-  opacity: 0.75;
-  transition: opacity 0.15s ease;
+/* Disable the transition while actively dragging/pinching so panning
+   feels immediate rather than lagging behind the finger (F3.6/F3.7). */
+.lightbox-stage img.panning {
+  transition: none;
 }
-
-.lightbox-close:hover,
-.lightbox-prev:hover,
-.lightbox-next:hover { opacity: 1; }
 
 .lightbox-close {
-  top: 12px;
-  right: 12px;
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: none;
+  border: none;
+  color: var(--color-text);
+  font-size: 32px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 1002;
+  opacity: 0.7;
 }
 
-.lightbox-prev { left: clamp(4px, 2vw, 24px); }
-.lightbox-next { right: clamp(4px, 2vw, 24px); }
+.lightbox-close:hover {
+  opacity: 1;
+}
 
-.lightbox-prev,
-.lightbox-next {
+/* D6 — desktop arrows: bigger, translucent, hidden until mouse moves,
+   fade out again when idle. Hidden entirely on mobile (F3.4/F3.7 —
+   mobile navigation is swipe-only). */
+.lightbox-arrow {
+  position: absolute;
   top: 50%;
   transform: translateY(-50%);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--color-text);
+  font-size: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.35s ease, background 0.2s ease;
+  z-index: 1001;
 }
 
-.lightbox-counter {
-  position: absolute;
-  bottom: 18px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: #f5f5f3;
-  font-size: 13px;
-  opacity: 0.7;
-  letter-spacing: 0.02em;
+.lightbox-arrow:hover {
+  background: rgba(255, 255, 255, 0.22);
 }
 
-@media (max-width: 640px) {
-  .lightbox-prev, .lightbox-next { padding: 8px; }
+.lightbox.arrows-visible .lightbox-arrow {
+  opacity: 1;
+}
+
+.lightbox-prev {
+  left: 24px;
+}
+
+.lightbox-next {
+  right: 24px;
+}
+
+@media (max-width: 768px) {
+  .lightbox-arrow {
+    display: none;
+  }
 }
