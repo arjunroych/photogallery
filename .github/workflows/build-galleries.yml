@@ -33,6 +33,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           find . -name 'photos.json' -exec git add {} +
+          find . -type d -name 'thumbs' -exec git add {} +
           if git diff --cached --quiet; then
             echo "No manifest changes."
           else
