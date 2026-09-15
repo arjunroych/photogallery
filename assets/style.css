@@ -83,7 +83,7 @@ html, body {
 
 @media (max-width: 768px) {
   :root {
-    --row-height: 120px;
+    --row-height: 60px;
     --page-margin: 12px;
     --header-padding-x: 12px;
   }
