@@ -102,14 +102,16 @@
   // ---------- Custom pinch/double-tap zoom + pan + zoom-aware swipe (F3.6 / F3.7) ----------
   //
   // Rule: at 1x zoom, a horizontal drag/swipe navigates to the next or
-  // previous photo. Once zoomed in (pinch or double-tap), a drag pans
-  // the image instead, and the user has to zoom back out before swipe
-  // navigation resumes.
+  // previous photo, with a Google Photos–style sliding transition that
+  // follows the finger and either completes or snaps back on release.
+  // Once zoomed in (pinch or double-tap), a drag pans the image instead,
+  // and the user has to zoom back out before swipe navigation resumes.
 
   const MIN_SCALE = 1;
   const MAX_SCALE = 4;
   const DOUBLE_TAP_MS = 280;
   const SWIPE_THRESHOLD_PX = 50;
+  const SLIDE_TRANSITION_MS = 220;
 
   let scale = MIN_SCALE;
   let originX = 0;
@@ -123,6 +125,31 @@
   let isPanningGesture = false;
   let lastTapTime = 0;
 
+  // Swipe-slide state — only engaged at 1x zoom (F3.7 rule)
+  let isSwipeDragging = false;
+  let dragDX = 0;
+  let swipeDirection = null; // 'next' | 'prev' | null
+
+  // The "peek" image is the incoming photo that slides in from the edge
+  // as the current one slides out, following the finger in real time.
+  const stage = lightboxImg.parentElement;
+  if (getComputedStyle(stage).position === 'static') {
+    stage.style.position = 'relative';
+  }
+  stage.style.overflow = 'hidden';
+
+  const lightboxImgPeek = document.createElement('img');
+  lightboxImgPeek.alt = '';
+  lightboxImgPeek.style.position = 'absolute';
+  lightboxImgPeek.style.top = '0';
+  lightboxImgPeek.style.left = '0';
+  lightboxImgPeek.style.width = '100%';
+  lightboxImgPeek.style.height = '100%';
+  lightboxImgPeek.style.objectFit = getComputedStyle(lightboxImg).objectFit || 'contain';
+  lightboxImgPeek.style.pointerEvents = 'none';
+  lightboxImgPeek.style.display = 'none';
+  stage.appendChild(lightboxImgPeek);
+
   function resetZoom() {
     scale = MIN_SCALE;
     originX = 0;
@@ -131,20 +158,94 @@
   }
 
   function applyTransform() {
-    lightboxImg.style.transform = `translate(${originX}px, ${originY}px) scale(${scale})`;
+    lightboxImg.style.transform = `translate(${originX + dragDX}px, ${originY}px) scale(${scale})`;
   }
 
   function clampOrigin() {
-    const stage = lightboxImg.parentElement.getBoundingClientRect();
+    const stageRect = stage.getBoundingClientRect();
     const imgRect = lightboxImg.getBoundingClientRect();
-    const maxX = Math.max(0, (imgRect.width * scale - stage.width) / 2);
-    const maxY = Math.max(0, (imgRect.height * scale - stage.height) / 2);
+    const maxX = Math.max(0, (imgRect.width * scale - stageRect.width) / 2);
+    const maxY = Math.max(0, (imgRect.height * scale - stageRect.height) / 2);
     originX = Math.min(maxX, Math.max(-maxX, originX));
     originY = Math.min(maxY, Math.max(-maxY, originY));
   }
 
   function distanceBetween(p1, p2) {
     return Math.hypot(p1.x - p2.x, p1.y - p2.y);
+  }
+
+  function stageWidth() {
+    return stage.getBoundingClientRect().width;
+  }
+
+  // Positions and shows/hides the peek image as the drag progresses.
+  function updateSwipePeek(dx) {
+    const width = stageWidth();
+
+    if (dx < 0 && currentIndex < photos.length - 1) {
+      swipeDirection = 'next';
+    } else if (dx > 0 && currentIndex > 0) {
+      swipeDirection = 'prev';
+    } else {
+      // At a boundary (first/last photo) — nothing to slide in, so the
+      // main image still follows the finger but rubber-bands back on release.
+      swipeDirection = null;
+    }
+
+    if (!swipeDirection) {
+      lightboxImgPeek.style.display = 'none';
+      return;
+    }
+
+    const peekIndex = swipeDirection === 'next' ? currentIndex + 1 : currentIndex - 1;
+    if (lightboxImgPeek.dataset.index !== String(peekIndex)) {
+      lightboxImgPeek.src = photos[peekIndex].full;
+      lightboxImgPeek.dataset.index = String(peekIndex);
+    }
+
+    const startX = swipeDirection === 'next' ? width : -width;
+    lightboxImgPeek.style.transform = `translateX(${startX + dx}px)`;
+    lightboxImgPeek.style.display = 'block';
+  }
+
+  // Animates the drag to completion (photo change) or back to center
+  // (cancel/rubber-band), then cleans up.
+  function endSwipeDrag(commit) {
+    const width = stageWidth();
+    const direction = swipeDirection;
+
+    lightboxImg.style.transition = `transform ${SLIDE_TRANSITION_MS}ms ease-out`;
+    lightboxImgPeek.style.transition = `transform ${SLIDE_TRANSITION_MS}ms ease-out`;
+
+    if (commit && direction) {
+      dragDX = direction === 'next' ? -width : width;
+      lightboxImgPeek.style.transform = 'translateX(0px)';
+    } else {
+      dragDX = 0;
+      const startX = direction === 'next' ? width : -width;
+      lightboxImgPeek.style.transform = `translateX(${startX}px)`;
+    }
+    applyTransform();
+
+    setTimeout(() => {
+      lightboxImg.style.transition = '';
+      lightboxImgPeek.style.transition = '';
+      lightboxImgPeek.style.display = 'none';
+      lightboxImgPeek.removeAttribute('data-index');
+      dragDX = 0;
+
+      if (commit && direction === 'next') {
+        currentIndex += 1;
+        showPhoto(currentIndex); // resets zoom/transform for the new photo
+      } else if (commit && direction === 'prev') {
+        currentIndex -= 1;
+        showPhoto(currentIndex);
+      } else {
+        applyTransform();
+      }
+      isSwipeDragging = false;
+      swipeDirection = null;
+    }, SLIDE_TRANSITION_MS);
   }
 
   lightboxImg.addEventListener('pointerdown', (e) => {
@@ -157,6 +258,7 @@
       // Only treat a single-pointer drag as panning if we're already
       // zoomed in; otherwise it's a candidate swipe-to-navigate.
       isPanningGesture = scale > MIN_SCALE;
+      isSwipeDragging = false;
     }
 
     if (activePointers.size === 2) {
@@ -187,35 +289,45 @@
       originY = e.clientY - dragOrigin.y;
       clampOrigin();
       applyTransform();
+      return;
+    }
+
+    if (activePointers.size === 1 && !isPanningGesture && scale === MIN_SCALE) {
+      const dx = e.clientX - gestureStart.x;
+      const dy = e.clientY - gestureStart.y;
+      // Only commit to a slide-drag once movement is clearly horizontal,
+      // so a vertical scroll/dismiss gesture isn't hijacked.
+      if (!isSwipeDragging && Math.abs(dx) < 10) return;
+      if (!isSwipeDragging && Math.abs(dy) > Math.abs(dx)) return;
+
+      isSwipeDragging = true;
+      dragDX = dx;
+      applyTransform();
+      updateSwipePeek(dx);
     }
   });
 
   function handlePointerEnd(e) {
-    const wasSinglePointerSwipeCandidate =
-      activePointers.size === 1 && !isPanningGesture && scale === MIN_SCALE;
+    const wasSwipeDrag = isSwipeDragging;
+    const dx = e.clientX - gestureStart.x;
+    const dy = e.clientY - gestureStart.y;
 
     activePointers.delete(e.pointerId);
     lightboxImg.classList.remove('panning');
 
-    if (wasSinglePointerSwipeCandidate && activePointers.size === 0) {
-      const dx = e.clientX - gestureStart.x;
-      const dy = e.clientY - gestureStart.y;
-      if (Math.abs(dx) > SWIPE_THRESHOLD_PX && Math.abs(dx) > Math.abs(dy)) {
-        if (dx < 0) {
-          nextPhoto();
-        } else {
-          prevPhoto();
-        }
-      }
+    if (wasSwipeDrag && activePointers.size === 0) {
+      const shouldCommit =
+        swipeDirection && Math.abs(dx) > SWIPE_THRESHOLD_PX && Math.abs(dx) > Math.abs(dy);
+      endSwipeDrag(shouldCommit);
     }
 
     if (activePointers.size === 0) {
       isPanningGesture = false;
-      if (scale < MIN_SCALE) resetZoom();
+      if (!wasSwipeDrag && scale < MIN_SCALE) resetZoom();
 
       // Double-tap / double-click to toggle zoom.
       const now = Date.now();
-      if (now - lastTapTime < DOUBLE_TAP_MS) {
+      if (!wasSwipeDrag && now - lastTapTime < DOUBLE_TAP_MS) {
         if (scale > MIN_SCALE) {
           resetZoom();
         } else {
