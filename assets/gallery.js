@@ -112,6 +112,7 @@
   const DOUBLE_TAP_MS = 280;
   const SWIPE_THRESHOLD_PX = 50;
   const SLIDE_TRANSITION_MS = 220;
+  const SLIDE_GAP_PX = 24; // visual space kept between the two photos while sliding
 
   let scale = MIN_SCALE;
   let originX = 0;
@@ -207,7 +208,7 @@
       lightboxImgPeek.dataset.index = String(peekIndex);
     }
 
-    const startX = swipeDirection === 'next' ? width : -width;
+    const startX = swipeDirection === 'next' ? width + SLIDE_GAP_PX : -(width + SLIDE_GAP_PX);
     lightboxImgPeek.style.transform = `translateX(${startX + dx}px)`;
     lightboxImgPeek.style.display = 'block';
   }
@@ -222,11 +223,11 @@
     lightboxImgPeek.style.transition = `transform ${SLIDE_TRANSITION_MS}ms ease-out`;
 
     if (commit && direction) {
-      dragDX = direction === 'next' ? -width : width;
+      dragDX = direction === 'next' ? -(width + SLIDE_GAP_PX) : width + SLIDE_GAP_PX;
       lightboxImgPeek.style.transform = 'translateX(0px)';
     } else {
       dragDX = 0;
-      const startX = direction === 'next' ? width : -width;
+      const startX = direction === 'next' ? width + SLIDE_GAP_PX : -(width + SLIDE_GAP_PX);
       lightboxImgPeek.style.transform = `translateX(${startX}px)`;
     }
     applyTransform();
