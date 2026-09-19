@@ -108,7 +108,7 @@
   // and the user has to zoom back out before swipe navigation resumes.
 
   const MIN_SCALE = 1;
-  const MAX_SCALE = 4;
+  const MAX_SCALE = 6;
   const DOUBLE_TAP_MS = 280;
   const SWIPE_THRESHOLD_PX = 50;
   const SLIDE_TRANSITION_MS = 220;
