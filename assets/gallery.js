@@ -115,11 +115,11 @@
   // and the user has to zoom back out before swipe navigation resumes.
 
   const MIN_SCALE = 1;
-  const MAX_SCALE = 4;
+  const MAX_SCALE = 6;
   const DOUBLE_TAP_MS = 280;
   const SWIPE_THRESHOLD_PX = 50;
   const SLIDE_TRANSITION_MS = 220;
-  const SLIDE_GAP_PX = 24; // visual space kept between the two photos while sliding
+  const SLIDE_GAP_PX = 12; // visual space kept between the two photos while sliding
 
   let scale = MIN_SCALE;
   let originX = 0;
