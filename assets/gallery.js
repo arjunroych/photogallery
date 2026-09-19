@@ -232,12 +232,19 @@
     applyTransform();
 
     setTimeout(() => {
-      lightboxImg.style.transition = '';
       lightboxImgPeek.style.transition = '';
       lightboxImgPeek.classList.remove('panning');
       lightboxImgPeek.style.display = 'none';
       lightboxImgPeek.removeAttribute('data-index');
       dragDX = 0;
+
+      // Clearing lightboxImg's inline transition here would let the CSS
+      // default (.lightbox-stage img { transition: transform 0.15s }) take
+      // over and animate this reset too — sliding the new photo in a
+      // second time from wherever the commit animation left off. Force it
+      // off for this one instant snap, then restore it afterward so zoom/
+      // pan still transition normally.
+      lightboxImg.style.transition = 'none';
 
       if (commit && direction === 'next') {
         currentIndex += 1;
@@ -248,6 +255,12 @@
       } else {
         applyTransform();
       }
+
+      // Force the browser to apply the instant snap before we hand the
+      // transition back, so it doesn't get picked up retroactively.
+      void lightboxImg.offsetHeight;
+      lightboxImg.style.transition = '';
+
       isSwipeDragging = false;
       swipeDirection = null;
     }, SLIDE_TRANSITION_MS);
