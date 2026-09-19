@@ -112,7 +112,7 @@
   const DOUBLE_TAP_MS = 280;
   const SWIPE_THRESHOLD_PX = 50;
   const SLIDE_TRANSITION_MS = 220;
-  const SLIDE_GAP_PX = 24; // visual space kept between the two photos while sliding
+  const SLIDE_GAP_PX = 10; // visual space kept between the two photos while sliding
 
   let scale = MIN_SCALE;
   let originX = 0;
