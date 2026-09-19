@@ -139,13 +139,17 @@
   stage.style.overflow = 'hidden';
 
   const lightboxImgPeek = document.createElement('img');
+  // Same class as the real image so it inherits your actual sizing rule
+  // (max-width/max-height/object-fit, however #lightbox-image defines it)
+  // instead of us guessing dimensions and distorting differently-shaped photos.
+  lightboxImgPeek.className = lightboxImg.className;
   lightboxImgPeek.alt = '';
   lightboxImgPeek.style.position = 'absolute';
   lightboxImgPeek.style.top = '0';
+  lightboxImgPeek.style.right = '0';
+  lightboxImgPeek.style.bottom = '0';
   lightboxImgPeek.style.left = '0';
-  lightboxImgPeek.style.width = '100%';
-  lightboxImgPeek.style.height = '100%';
-  lightboxImgPeek.style.objectFit = getComputedStyle(lightboxImg).objectFit || 'contain';
+  lightboxImgPeek.style.margin = 'auto'; // centers within the stage, same as the real image
   lightboxImgPeek.style.pointerEvents = 'none';
   lightboxImgPeek.style.display = 'none';
   stage.appendChild(lightboxImgPeek);
@@ -230,6 +234,7 @@
     setTimeout(() => {
       lightboxImg.style.transition = '';
       lightboxImgPeek.style.transition = '';
+      lightboxImgPeek.classList.remove('panning');
       lightboxImgPeek.style.display = 'none';
       lightboxImgPeek.removeAttribute('data-index');
       dragDX = 0;
@@ -300,6 +305,13 @@
       if (!isSwipeDragging && Math.abs(dx) < 10) return;
       if (!isSwipeDragging && Math.abs(dy) > Math.abs(dx)) return;
 
+      if (!isSwipeDragging) {
+        // .lightbox-stage img has a default transform transition (used for
+        // the release ease); kill it during the live drag, same as .panning
+        // already does for pinch/pan, so the image tracks the finger 1:1.
+        lightboxImg.classList.add('panning');
+        lightboxImgPeek.classList.add('panning');
+      }
       isSwipeDragging = true;
       dragDX = dx;
       applyTransform();
