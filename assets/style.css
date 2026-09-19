@@ -3,7 +3,9 @@
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 
   /* D4 — dark mode: dark gray bg, soft light-gray text (not pure black/white) */
-  --color-bg: #1b1b1b;
+  --color-bg: #1b1b1b; /* solid fallback / overscroll color */
+  --bg-top: #2c2c2e;    /* gradient start — Apple dark systemGray5 */
+  --bg-bottom: #141416; /* gradient end — just above near-black */
   --color-text: #d6d6d6;
   --color-text-dim: #999999;
   --color-accent: #3f6b5c; /* pine green, unchanged from v1 */
@@ -25,9 +27,31 @@
 html, body {
   margin: 0;
   padding: 0;
-  background: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-body);
+}
+
+/* D4 — Apple-esque dark gradient. Painted on a fixed pseudo-element rather
+   than body so it stays put while the grid scrolls and doesn't stretch over
+   tall albums on iOS Safari (which ignores background-attachment: fixed).
+   body must stay transparent or its own background would cover this layer. */
+html {
+  background-color: var(--color-bg);
+}
+
+body {
+  background: transparent;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 70% at 50% -10%, rgba(255, 255, 255, 0.06), transparent 60%),
+    linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
 }
 
 /* ---------- Album header (F6.1 / F6.2 / F6.3) ---------- */
