@@ -76,7 +76,14 @@
   btnPrev.addEventListener('click', prevPhoto);
 
   lightbox.addEventListener('click', (e) => {
-    if (e.target === lightbox) closeLightbox();
+    // .lightbox-stage fills the whole lightbox, so a click on the empty
+    // space around the photo lands on the stage, not on .lightbox itself —
+    // check both so "click outside the image" actually closes it, while
+    // clicks on the photo, the arrows, or the close button (separate
+    // elements) don't.
+    if (e.target === lightbox || e.target === lightboxImg.parentElement) {
+      closeLightbox();
+    }
   });
 
   // ---------- Keyboard navigation (F3.3) ----------
@@ -108,11 +115,11 @@
   // and the user has to zoom back out before swipe navigation resumes.
 
   const MIN_SCALE = 1;
-  const MAX_SCALE = 6;
+  const MAX_SCALE = 4;
   const DOUBLE_TAP_MS = 280;
   const SWIPE_THRESHOLD_PX = 50;
   const SLIDE_TRANSITION_MS = 220;
-  const SLIDE_GAP_PX = 12; // visual space kept between the two photos while sliding
+  const SLIDE_GAP_PX = 24; // visual space kept between the two photos while sliding
 
   let scale = MIN_SCALE;
   let originX = 0;
