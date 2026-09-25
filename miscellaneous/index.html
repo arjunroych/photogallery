@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+  <!-- F6 — keeps this album out of search engines even without a homepage link -->
+  <meta name="robots" content="noindex, nofollow">
+
+  <!-- F6.4 — EDIT ME: this is the browser tab title. Not auto-generated. -->
+  <title>Album Title — Edit Me</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="icon" type="image/png" href="https://photos.arjunroychowdhury.ca/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+  <header class="album-header">
+    <!-- F6.1 — EDIT ME: album title. Not derived from the folder name anymore. -->
+    <h1 class="album-title">Miscellaneous</h1>
+
+    <!-- F6.2 — EDIT ME: a date, or a range like "June 12–15, 2026" -->
+    <p class="album-date">2026</p>
+
+    <!-- F6.3 — EDIT ME: one short paragraph about the album -->
+    <p class="album-description"></p>
+  </header>
+
+  <main id="gallery-grid" class="gallery-grid" aria-label="Photo grid"></main>
+
+  <div id="lightbox" class="lightbox" aria-hidden="true">
+    <button id="lightbox-close" class="lightbox-close" aria-label="Close">&times;</button>
+    <button id="lightbox-prev" class="lightbox-arrow lightbox-prev" aria-label="Previous photo">&#8249;</button>
+    <div class="lightbox-stage">
+      <img id="lightbox-image" alt="">
+    </div>
+    <button id="lightbox-next" class="lightbox-arrow lightbox-next" aria-label="Next photo">&#8250;</button>
+  </div>
+
+  <script>
+    // A5 — relative paths like ./photos.json and ../assets/gallery.js
+    // only resolve correctly with a trailing slash on the album URL.
+    if (!location.pathname.endsWith('/')) {
+      location.replace(location.pathname + '/' + location.search + location.hash);
+    }
+  </script>
+  <script src="../assets/gallery.js"></script>
+</body>
+</html>
