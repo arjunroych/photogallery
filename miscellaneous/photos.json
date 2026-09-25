@@ -1,0 +1,32 @@
+{
+  "photos": [
+    {
+      "thumb": "thumbs/DSC02438.jpg",
+      "full": "photos/DSC02438.jpg"
+    },
+    {
+      "thumb": "thumbs/DSC02467.jpg",
+      "full": "photos/DSC02467.jpg"
+    },
+    {
+      "thumb": "thumbs/DSC02478.jpg",
+      "full": "photos/DSC02478.jpg"
+    },
+    {
+      "thumb": "thumbs/DSC02479.jpg",
+      "full": "photos/DSC02479.jpg"
+    },
+    {
+      "thumb": "thumbs/DSC02482.jpg",
+      "full": "photos/DSC02482.jpg"
+    },
+    {
+      "thumb": "thumbs/DSC03622.jpg",
+      "full": "photos/DSC03622.jpg"
+    },
+    {
+      "thumb": "thumbs/DSC03626.jpg",
+      "full": "photos/DSC03626.jpg"
+    }
+  ]
+}
