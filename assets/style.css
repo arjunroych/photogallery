@@ -101,7 +101,7 @@ body::before {
   height: var(--row-height);
   flex-grow: 1;
   object-fit: cover;
-  cursor: zoom-in;
+  cursor: pointer;
   background: #262626;
 }
 
